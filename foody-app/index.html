@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0e0a1a">
+  <title>Foody — Food Delivery System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;700;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="ambient" aria-hidden="true"><i></i><i></i><i></i></div>
+
+  <header class="topbar">
+    <button class="wordmark" data-nav="home" aria-label="Foody home">Foody</button>
+    <nav class="main-nav" aria-label="Main">
+      <button class="nav-btn active" data-nav="home">Dashboard</button>
+      <button class="nav-btn" data-nav="restaurants">Restaurants</button>
+      <button class="nav-btn" data-nav="offers">Offers</button>
+      <button class="nav-btn" data-nav="cart">Cart <span class="badge" id="cartBadge">0</span></button>
+    </nav>
+    <div class="session" id="sessionBox" hidden>
+      <span class="dot"></span><span id="sessionLabel"></span>
+      <button class="btn small ghost" id="logoutTop">Log Out</button>
+    </div>
+  </header>
+
+  <main>
+    <!-- PUBLIC DASHBOARD -->
+    <section class="view active" id="view-home">
+      <div class="hero">
+        <div class="hero-copy">
+          <h1>Dinner, delivered before you finish deciding.</h1>
+          <p>Foody connects hungry customers, busy kitchens and the people who run it all. Pick your portal and sign in to get started.</p>
+        </div>
+        <div class="hero-art" aria-hidden="true"><span>🍛</span><span>🍕</span><span>🥗</span><span>🍜</span></div>
+      </div>
+      <div class="portals">
+        <button class="portal p-admin" data-portal="admin">
+          <span class="portal-icon">🛡️</span>
+          <strong>Admin Module</strong>
+          <span class="portal-text">Track customers and live order volume across the platform.</span>
+          <em>Sign in</em>
+        </button>
+        <button class="portal p-user" data-portal="user">
+          <span class="portal-icon">🍽️</span>
+          <strong>User Module</strong>
+          <span class="portal-text">Browse the menu, build your cart and check out in seconds.</span>
+          <em>Sign in</em>
+        </button>
+        <button class="portal p-manager" data-portal="manager">
+          <span class="portal-icon">👨‍🍳</span>
+          <strong>Manager Module</strong>
+          <span class="portal-text">Accept, reject and move every order through the kitchen.</span>
+          <em>Sign in</em>
+        </button>
+      </div>
+    </section>
+
+    <!-- ADMIN -->
+    <section class="view" id="view-admin">
+      <div class="module-head"><h2>Admin Module</h2><button class="btn ghost" data-logout>Log Out</button></div>
+      <div class="metrics">
+        <div class="metric"><span class="metric-label">Total customers</span><span class="metric-value" id="mCustomers">0</span></div>
+        <div class="metric hot"><span class="metric-label">Active orders</span><span class="metric-value" id="mActive">0</span></div>
+        <div class="metric"><span class="metric-label">All orders received</span><span class="metric-value" id="mTotal">0</span></div>
+      </div>
+      <h3 class="sub">Customer registry</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Joined</th><th>Orders</th></tr></thead>
+          <tbody id="customerBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- USER -->
+    <section class="view" id="view-user">
+      <div class="module-head"><h2>Today's menu</h2><button class="btn ghost" data-logout>Log Out</button></div>
+      <div class="grid" id="foodGrid"></div>
+    </section>
+
+    <!-- MANAGER -->
+    <section class="view" id="view-manager">
+      <div class="module-head"><h2>Manager Module</h2><button class="btn ghost" data-logout>Log Out</button></div>
+      <h3 class="sub">Add order</h3>
+      <div class="form-row glass">
+        <input id="fCustomer" placeholder="Customer name" aria-label="Customer name">
+        <input id="fItem" placeholder="Item" aria-label="Item">
+        <input id="fPrice" type="number" min="0" step="0.01" placeholder="Price" aria-label="Price">
+        <button class="btn primary" id="createOrderBtn">Add Order</button>
+      </div>
+      <p class="form-msg" id="formMsg"></p>
+      <h3 class="sub">Order pipeline</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>ID</th><th>Customer</th><th>Items</th><th>Total</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody id="orderBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- RESTAURANTS -->
+    <section class="view" id="view-restaurants">
+      <h2>Partner restaurants</h2>
+      <div class="grid" id="restaurantGrid"></div>
+    </section>
+
+    <!-- OFFERS -->
+    <section class="view" id="view-offers">
+      <h2>Exclusive vouchers</h2>
+      <div class="grid" id="offerGrid"></div>
+    </section>
+
+    <!-- CART -->
+    <section class="view" id="view-cart">
+      <h2>Your cart</h2>
+      <div class="cart-layout">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Item</th><th>Price</th><th>Qty</th><th>Subtotal</th><th></th></tr></thead>
+            <tbody id="cartBody"></tbody>
+          </table>
+        </div>
+        <aside class="summary glass">
+          <div class="line"><span>Items</span><span id="sCount">0</span></div>
+          <div class="line"><span>Subtotal</span><span id="sSub">₹0.00</span></div>
+          <div class="line"><span>Delivery fee</span><span id="sFee">₹0.00</span></div>
+          <div class="line"><span>Voucher</span><span id="sDisc">−₹0.00</span></div>
+          <div class="line total"><span>Total</span><span id="sTotal">₹0.00</span></div>
+          <button class="btn primary block" id="placeOrderBtn">Place Order</button>
+          <p class="form-msg" id="cartMsg"></p>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-brand"><span class="wordmark static">Foody</span><span class="muted">Food delivery, handled.</span></div>
+      <div class="footer-team"><span class="muted">Designed and developed by the</span><strong class="team-name">Harsha</strong><span class="muted">development team</span></div>
+    </div>
+    <p class="copy">© 2026 Harsha. All rights reserved. · <a class="repo-link" id="repoLink" href="#" target="_blank" rel="noopener">Git repository</a></p>
+  </footer>
+
+  <!-- LOGIN MODAL -->
+  <div class="overlay" id="loginOverlay" hidden>
+    <form class="modal" id="loginForm" role="dialog" aria-modal="true" aria-labelledby="loginTitle" autocomplete="off">
+      <div class="modal-icon" id="loginIcon">🔐</div>
+      <h2 id="loginTitle">Sign in</h2>
+      <p class="muted" id="loginHint"></p>
+      <label for="lUser">Username</label>
+      <input id="lUser" required>
+      <label for="lPass">Password</label>
+      <input id="lPass" type="password" required>
+      <p class="form-msg" id="loginMsg" role="alert"></p>
+      <div class="modal-actions">
+        <button type="button" class="btn ghost" id="loginCancel">Cancel</button>
+        <button type="submit" class="btn primary">Sign In</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="toast" id="toast" role="status"></div>
+  <script src="script.js"></script>
+</body>
+</html>
